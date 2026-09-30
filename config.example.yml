@@ -1,42 +1,47 @@
 # ── agent-as-tool：把智能体封装成工具 ──────────────────────────────
-# 只挂在这个预设里，worker 会话（pta/ptb 预设）不含此插件，避免递归死循环。
+# 只挂在使用它的预设里；由本插件创建的 worker 会话不含此插件，避免递归死循环。
+#
+# 换到自己环境时只需要改两处：每个 agent 的 `cwd` 与 `agentPreset`。
 - id: agent-as-tool
   name: 'dsh-agent-as-tool'
   config:
     registryDir: '.dsh-agent-as-tool'
     agents:
-      - name: bb
+      # 例 1：轻量问答型 agent（快、超时收紧到 2 分钟）
+      - name: date-bot
         description: |
           返回今天的日期，包含年月日和星期。
           当用户询问"今天几号""今天星期几""今天的日期是多少"等日期类问题时，使用本工具。
-        cwd: 'E:\03_智能体\bb'
-        agentPreset: bb
+        cwd: 'D:\agents\date-bot'        # ← 换成该 agent 自己的工作区路径
+        agentPreset: date-bot            # ← 换成该 agent 使用的预设 id
         model: deepseek-flash
         reasoningEffort: high
         permissionPreset: workspace-write
         approvalPolicy: ask
         timeoutMs: 120000
         maxTurns: 50
-      - name: cc
+      # 例 2：单次调用较慢的 agent（超时放宽到 10 分钟）
+      - name: weather-bot
         description: |
           查询指定城市的天气，包含温度、天气状况、是否下雨等。
           当用户询问"某地天气怎么样""会不会下雨""气温多少度"等天气类问题时，使用本工具。
-        cwd: 'E:\03_智能体\cc'
-        agentPreset: cc
+        cwd: 'D:\agents\weather-bot'
+        agentPreset: weather-bot
         model: deepseek-flash
         reasoningEffort: high
         permissionPreset: workspace-write
         approvalPolicy: ask
         timeoutMs: 600000
         maxTurns: 50
-      - name: mom
+      # 例 3：多步业务型 agent（描述里写清「做什么 / 别做什么」最有效）
+      - name: ops-bot
         description: |
-          制造运营管理大管家「大飞龙」：只负责制造运营管理业务话题（客户主数据、生产看板、OEE 等）。
-          能力：按 index.md 接口索引 + 对应 wiki 页调后端接口（查 / 增 / 改 / 删，一次一个），生成 Word / Excel / PPT / PDF，读取用户上传的附件。
-          当用户询问制造运营管理、工厂运营、客户主数据、接口台账这类业务问题时，使用本工具；编程、医疗、金融、生活、闲聊等无关话题不要用它。
+          业务运营助手：只负责某一业务领域的话题（如主数据查询、看板指标、台账核对）。
+          能力：按接口索引调后端接口（查 / 增 / 改 / 删，一次一个），生成 Word / Excel / PPT / PDF，读取用户上传的附件。
+          当用户询问该业务领域的问题时使用本工具；编程、医疗、金融、生活、闲聊等无关话题不要用它。
           行为特点：回复极简（默认一句话结论、最多 3 行）；不接纯文件活、不跑 shell；非 GET 操作会先查当前状态再等用户确认；缺账号密码时会反问用户。
-        cwd: 'E:\03_智能体\大飞龙'
-        agentPreset: mom-agent-user
+        cwd: 'D:\agents\ops-bot'
+        agentPreset: ops-bot
         model: deepseek-flash
         reasoningEffort: high
         permissionPreset: workspace-write
