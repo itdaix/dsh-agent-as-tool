@@ -1,0 +1,15 @@
+{
+  "name": "dsh-agent-as-tool",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "把智能体封装成具名工具：指定工作区+预设，建/复用独立会话，透传审批与提问。",
+  "exports": {
+    ".": "./index.js"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

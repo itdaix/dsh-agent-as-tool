@@ -1,0 +1,9 @@
+# agent-as-tool 的装载补丁。
+#
+# 这里只「声明」一行，且 disabled: true —— 全局不加载。
+# 真正的启用由 ptc-agent 预设的 agent.cordis.yml 负责，
+# 使 PTA/PTB 只在 PTC 预设生效，避免 worker 会话（pta/ptb 预设）递归死循环。
+- insert:
+    - id: agent-as-tool
+      name: 'dsh-agent-as-tool'
+      disabled: true
